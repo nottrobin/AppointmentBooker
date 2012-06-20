@@ -1,5 +1,7 @@
 <?php
 
+error_reporting (E_ERROR);
+
 require('simpletest/browser.php');
 
 $settingsJson = file_get_contents("credentials.json");
@@ -48,11 +50,12 @@ $browser->click('Next');
 $finalPageText = $browser->getContent();
 
 if(preg_match ('/No appointments available/msU', $finalPageText)) {
-	echo date('Y-m-d', time()) . ": No appointments\n";
+	echo date('Y-m-d H:i:s', time()) . ": No appointments\n";
 } else if(preg_match ('/choose an appointment/msU', $finalPageText)) {
-	echo "\n===\n\n" . date('Y-m-d', time()) . ": APPOINTMENTS!\n---\n";
+	echo "\n===\n\n" . date('Y-m-d H:i:s', time()) . ": APPOINTMENTS!\n---\n";
 	echo $finalPageText;
+    echo "\n\n===\n\n";
 } else {
-	echo "\n===\n\n" . date('Y-m-d', time()) . ": Some sort of error\n\n===\n";
+	echo date('Y-m-d H:i:s', time()) . ": Some sort of error\n";
 }
 
