@@ -54,9 +54,8 @@ file_put_contents('documents/' . date('Ymd-His', time()) . '.html', $finalPageTe
 if(preg_match ('/No appointments available/msU', $finalPageText)) {
 	echo date('Y-m-d H:i:s', time()) . ": No appointments\n";
 } else if(preg_match ('/choose an appointment/msU', $finalPageText)) {
-	echo "\n===\n\n" . date('Y-m-d H:i:s', time()) . ": APPOINTMENTS!\n---\n";
     printAppointmentsFromDocument($finalPageText);
-    echo "\n===\n\n";
+    echo "\n";
 } else {
 	echo date('Y-m-d H:i:s', time()) . ": Some sort of error\n";
 }
@@ -92,6 +91,14 @@ function printAppointments(DOMNodeList $appointmentCells) {
     // Print each of the chunks
     foreach($appointmentChunks as $chunk) {
         echo $chunk[0] . ' ' . $chunk[1] . ' at ' .$chunk[2] . "\n";
+
+        if(preg_match('/1[3-7].*August/', $chunk[1])) {
+            sendEmailAbout($chunk[1]);
+        }
     }
+}
+
+function sendEmailAbout($apptDate) {
+    mail ( 'robin@robinwinslow.co.uk', 'Appointment: ' . $apptDate, 'https://apply.ukba.homeoffice.gov.uk/secure/protected/account');
 }
 
