@@ -49,13 +49,49 @@ $browser->click('Next');
 
 $finalPageText = $browser->getContent();
 
+file_put_contents('documents/' . date('Ymd-His', time()) . '.html', $finalPageText);
+
 if(preg_match ('/No appointments available/msU', $finalPageText)) {
 	echo date('Y-m-d H:i:s', time()) . ": No appointments\n";
 } else if(preg_match ('/choose an appointment/msU', $finalPageText)) {
 	echo "\n===\n\n" . date('Y-m-d H:i:s', time()) . ": APPOINTMENTS!\n---\n";
-	echo $finalPageText;
-    echo "\n\n===\n\n";
+    printAppointmentsFromDocument($finalPageText);
+    echo "\n===\n\n";
 } else {
 	echo date('Y-m-d H:i:s', time()) . ": Some sort of error\n";
+}
+
+function printAppointmentsFromDocument($documentString) {
+    $locations = array('Croydon', 'Sheffield', 'Birmingham (Solihull)');
+    $document = new DOMDocument();
+    $document->loadHTML($documentString);
+    // Get collections of all relevant appointment data
+    $xpath = new DomXPath($document);
+    printAppointmentsForLocations($xpath, $locations);
+}
+
+function printAppointmentsForLocations(DomXPath $xpath, $locations) {
+    foreach($locations as $location) {
+        $appointmentCells = $xpath->query("descendant-or-self::*[@summary = 'Available appointments at " . $location . "']/tr/td");
+        
+        if($appointmentCells->length > 0) {
+            echo $location . " appointments:\n";
+            printAppointments($appointmentCells);
+        }
+    }
+}
+
+function printAppointments(DOMNodeList $appointmentCells) {
+    // Create array of data
+    $appointmentData = array();
+    foreach($appointmentCells as $cell) {
+        $appointmentData[] = $cell->nodeValue;
+    }
+    // Split data into chunks of 4
+    $appointmentChunks = array_chunk($appointmentData, 4);
+    // Print each of the chunks
+    foreach($appointmentChunks as $chunk) {
+        echo $chunk[0] . ' ' . $chunk[1] . ' at ' .$chunk[2] . "\n";
+    }
 }
 
