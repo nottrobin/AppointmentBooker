@@ -1,5 +1,5 @@
-APPDIR=/home/robin/projects/AppointmentBooker
-PHP=/usr/alternate/bin/php
+APPDIR=/path/to/your/project/AppointmentBooker
+PHP=/path/to/your/php
 
 20 12 * * * cd $APPDIR; mail -s 'Ukba Appointments' robin@robinwinslow.co.uk < appointmentsLog.txt; mv appointmentsLog.txt appointmentsLog.`/bin/date +"\%Y-\%m-\%d"`.txt;
 */5 * * * * cd $APPDIR; $PHP emulator.php >> appointmentsLog.txt;
