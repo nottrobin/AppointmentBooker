@@ -48,12 +48,14 @@ $browser->setField('tabbedQuestions:screens:screen1:j_id1012:checkbox', 'on');
 $browser->click('Next');
 
 $finalPageText = $browser->getContent();
+// $finalPageText = file_get_contents('test.html');;
 
 file_put_contents('documents/' . date('Ymd-His', time()) . '.html', $finalPageText);
 
 if(preg_match ('/No appointments available/msU', $finalPageText)) {
 	echo date('Y-m-d H:i:s', time()) . ": No appointments\n";
 } else if(preg_match ('/choose an appointment/msU', $finalPageText)) {
+	echo "\n" . date('Y-m-d H:i:s', time()) . ": Appointments!\n";
     printAppointmentsFromDocument($finalPageText);
     echo "\n";
 } else {
@@ -99,6 +101,10 @@ function printAppointments(DOMNodeList $appointmentCells) {
 }
 
 function sendEmailAbout($apptDate) {
-    mail ( 'robin@robinwinslow.co.uk', 'Appointment: ' . $apptDate, 'https://apply.ukba.homeoffice.gov.uk/secure/protected/account');
+    mail (
+        'robin@robinwinslow.co.uk',
+        'Appointment: ' . $apptDate,
+        'https://apply.ukba.homeoffice.gov.uk/secure/protected/account'
+    );
 }
 
